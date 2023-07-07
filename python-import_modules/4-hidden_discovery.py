@@ -10,4 +10,3 @@ if __name__ == '__main__':
         if newlist[i][0] != '_':
             print(newlist[i])
         i += 1
-
