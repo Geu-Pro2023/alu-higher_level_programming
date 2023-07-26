@@ -1,27 +1,15 @@
 #!/usr/bin/python3
-# 8-rectangle.py
-# Carlos Barros <1543@holbertonschool.com>
-""" File name : 8-rectangle.py
-    It is not allowed to import any module
 """
+Contains the class BaseGeometry and subclass Rectangle
+"""
+
 BaseGeometry = __import__('7-base_geometry').BaseGeometry
 
 
 class Rectangle(BaseGeometry):
-    """
-    Class Rectangle that inherits
-    from class 'BaseGeometry'
-    Attributes:
-    ----------
-    width  {int} -- [Rectangle's width]
-    height {int} -- [Rectangle's height]
-    """
-
+    """A representation of a rectangle"""
     def __init__(self, width, height):
-        """
-        private attributes width and height,
-        and validating if they are ints.
-        """
+        """instantiation of the rectangle"""
         self.integer_validator("width", width)
         self.__width = width
         self.integer_validator("height", height)
