@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 class MyList(list):
     """This is my class
     MyList that inherits from
