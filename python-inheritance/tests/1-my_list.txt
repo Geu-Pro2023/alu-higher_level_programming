@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 >>> MyList = _import_('1-my_list').MyList
 >>> my_list = MyList()
 >>> bool = isinstance(my_list, MyList)
