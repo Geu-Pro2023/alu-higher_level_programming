@@ -1,1 +1,0 @@
-tests/7-base_geometry.txt
