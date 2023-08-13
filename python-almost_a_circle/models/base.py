@@ -1,139 +1,193 @@
 #!/usr/bin/python3
-import unittest
-from models.square import Square
-import sys
-from io import StringIO
-import pep8
-from models.base import Base
+"""This module contains a class to serve as base for other classes"""
+
+
+import csv
 import json
-from models.rectangle import Rectangle
 import os
-"""
-This module contains all unittest for Base class
-"""
+import turtle
 
 
-class TestBase(unittest.TestCase):
-    """
-    Class of functions to run tests
-    """
-    def setUp(self):
-        """
-        function to redirect stdout
-        """
-        sys.stdout = StringIO()
+class Base:
+    """Represents base of all classes created """
 
-    def tearDown(self):
-        """
-        cleans everything
-        """
-        sys.stdout = sys.__stdout__
+    __nb_objects = 0
 
-    def test_pep8_model(self):
-        """
-        Tests for pep8 model
-        """
-        p8 = pep8.StyleGuide(quiet=True)
-        p = p8.check_files(['models/base.py'])
-        self.assertEqual(p.total_errors, 0, "fix pep8")
+    def __init__(self, id=None):
+        """ """
+        if id is not None:
+            self.id = id
+        else:
+            Base.__nb_objects += 1
+            self.id = Base.__nb_objects
 
-    def test_pep8_test(self):
-        """
-        Tests for pep8 test
-        """
-        p8 = pep8.StyleGuide(quiet=True)
-        p = p8.check_files(['tests/test_models/test_base.py'])
-        self.assertEqual(p.total_errors, 0, "fix pep8")
+    @staticmethod
+    def to_json_string(list_dictionaries):
+        """returns the JSON representation of list_dictionaries"""
+        if list_dictionaries is None or list_dictionaries == []:
+            return "[]"
+        if (type(list_dictionaries) != list or not
+                all(type(i) == dict for i in list_dictionaries)):
+            raise TypeError("list_dictionaries must be a list of dictionaries")
+        return json.dumps(list_dictionaries)
 
-    def test_docstrings(self):
-        self.assertIsNotNone(module_doc)
-        self.assertIsNotNone(Base.__doc__)
-        self.assertIs(hasattr(Base, "__init__"), True)
-        self.assertIsNotNone(Base.__init__.__doc__)
-        self.assertIs(hasattr(Base, "create"), True)
-        self.assertIsNotNone(Base.create.__doc__)
-        self.assertIs(hasattr(Base, "to_json_string"), True)
-        self.assertIsNotNone(Base.to_json_string.__doc__)
-        self.assertIs(hasattr(Base, "from_json_string"), True)
-        self.assertIsNotNone(Base.from_json_string.__doc__)
-        self.assertIs(hasattr(Base, "save_to_file"), True)
-        self.assertIsNotNone(Base.save_to_file.__doc__)
-        self.assertIs(hasattr(Base, "load_from_file"), True)
-        self.assertIsNotNone(Base.load_from_file.__doc__)
+    @classmethod
+    def save_to_file(cls, list_objs):
+        """Save JSON representation to file"""
+        file_name = cls.__name__ + ".json"
+        with open(file_name, "w") as jsonfile:
+            if list_objs is None:
+                jsonfile.write("[]")
+            else:
+                list_dicts = [o.to_dictionary() for o in list_objs]
+                jsonfile.write(Base.to_json_string(list_dicts))
 
-    def test_id(self):
-        """
-        Test check for id 
-        """
-        Base._Base__nb_objects = 0
-        b1 = Base()
-        b2 = Base()
-        b3 = Base()
-        b4 = Base(12)
-        b5 = Base()
-        self.assertEqual(b1.id, 1)
-        self.assertEqual(b2.id, 2)
-        self.assertEqual(b3.id, 3)
-        self.assertEqual(b4.id, 12)
-        self.assertEqual(b5.id, 4)
+    @staticmethod
+    def from_json_string(json_string):
+        """Returns list of JSON string representations"""
+        json_string_list = []
 
-    def test_from_json_string(self):
-        """
-        Test check from json string
-        """
-        self.assertEqual(Base.to_json_string(None), "[]")
-        self.assertEqual(Base.to_json_string([]), "[]")
-        with self.subTest():
-            r1 = Rectangle(10, 7, 2, 8, 1)
-            r1_dict = r1.to_dictionary()
-            json_dict = Base.to_json_string([r1_dict])
-            self.assertEqual(r1_dict, {'x': 2, 'width': 10,
-                                       'id': 1, 'height': 7,
-                                       'y': 8})
-            self.assertIs(type(r1_dict), dict)
-            self.assertIs(type(json_dict), str)
-            self.assertEqual(json.loads(json_dict), json.loads('[{"x": 2, '
-                                                               '"width": 10, '
-                                                               '"id": 1, '
-                                                               '"height": 7, '
-                                                               '"y": 8}]'))
+        if json_string is not None and json_string != '':
+            if type(json_string) != str:
+                raise TypeError("json_string must be a string")
+            json_string_list = json.loads(json_string)
 
-    def test_rectangle(self):
-        """
-        Test check for rectangle
-        """
-        R1 = Rectangle(4, 5, 6)
-        R1_dict = R1.to_dictionary()
-        R2 = Rectangle.create(**R1_dict)
-        self.assertNotEqual(R1, R2)
+        return json_string_list
 
-    def test_square(self):
-        """
-        Test check for square creation
-        """
-        S1 = Square(44, 55, 66, 77)
-        S1_dict = S1.to_dictionary()
-        S2 = Rectangle.create(**S1_dict)
-        self.assertNotEqual(S1, S2)
+    @classmethod
+    def create(cls, **dictionary):
+        """Returns an instance with all attributes already set"""
+        # create an instance of an existing class
+        if cls.__name__ == 'Rectangle':
+            dummy = cls(1, 1)
+        elif cls.__name__ == 'Square':
+            dummy = cls(1)
 
-    def test_file_rectangle(self):
-        """
-        Test check if file loads from rectangle
-        """
-        R1 = Rectangle(33, 34, 35, 26)
-        R2 = Rectangle(202, 2)
-        lR = [R1, R2]
-        Rectangle.save_to_file(lR)
-        lR2 = Rectangle.load_from_file()
-        self.assertNotEqual(lR, lR2)
+        dummy.update(**dictionary)
+        return dummy
 
-    def test_file_square(self):
+    @classmethod
+    def load_from_file(cls):
+        """Returns a list of instances"""
+
+        file_name = cls.__name__ + ".json"
+        list_of_instances = []
+        list_dictionaries = []
+
+        if os.path.exists(file_name):
+            with open(file_name, 'r') as my_file:
+                my_str = my_file.read()
+                list_dictionaries = cls.from_json_string(my_str)
+                for dictionary in list_dictionaries:
+                    list_of_instances.append(cls.create(**dictionary))
+        return list_of_instances
+
+    @classmethod
+    def save_to_file_csv(cls, list_objs):
+        """Serializes list_objs and saves to file"""
+
+        # if (type(list_objs) != list and list_objs is not None
+        #    or not all(isinstance(i, cls) for i in list_objs)):
+
+        #     raise TypeError("list_objs must be a list of instances")
+
+        # file_name = cls.__name__ + ".csv"
+        # with open(file_name, 'w') as my_file:
+        #     if list_objs is not None:
+        #         list_objs = [i.todictionary for i in list_objs]
+        #         if cls.__name__ == 'Rectangle':
+        #             records = ['id', 'width', 'height', 'x', 'y']
+        #         elif cls.__name__ == 'Square':
+        #             records = ['id', 'size', 'x', 'y']
+        #         script = csv.DictWriter(my_file, fieldnames=records)
+        #         script.writeheader()
+        #         script.writerows(list_objs)
+
+        filename = cls.__name__ + ".csv"
+        with open(filename, "w", newline="") as csvfile:
+            if list_objs is None or list_objs == []:
+                csvfile.write("[]")
+            else:
+                if cls.__name__ == "Rectangle":
+                    fieldnames = ["id", "width", "height", "x", "y"]
+                else:
+                    fieldnames = ["id", "size", "x", "y"]
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                for obj in list_objs:
+                    writer.writerow(obj.to_dictionary())
+
+    @classmethod
+    def load_from_file_csv(cls):
+        """Deserializes CSV format from a file"""
+
+        # file_name = cls.__name__ + ".csv"
+        # list_of_instances = []
+        # if os.path.exists(file_name):
+        #     with open(file_name, 'r') as my_file:
+        #         reader = csv.reader(my_file, delimiter=',')
+        #         if cls.__name__ == 'Rectangle':
+        #             records = ['id', 'width', 'height', 'x', 'y']
+        #         elif cls.__name__ == 'Square':
+        #             records = ['id', 'size', 'x', 'y']
+        #         for i, row in enumerate(reader):
+        #             if i > 0:
+        #                 x = cls(1, 1)
+        #                 for j, y in enumerate(row):
+        #                     if y:
+        #                         setattr(x, records[j], int(y))
+        #                 list_of_instances.append(x)
+        # return list_of_instances
+
+        filename = cls.__name__ + ".csv"
+        try:
+            with open(filename, "r", newline="") as csvfile:
+                if cls.__name__ == "Rectangle":
+                    fieldnames = ["id", "width", "height", "x", "y"]
+                else:
+                    fieldnames = ["id", "size", "x", "y"]
+                list_dicts = csv.DictReader(csvfile, fieldnames=fieldnames)
+                list_dicts = [dict([k, int(v)] for k, v in d.items())
+                              for d in list_dicts]
+                return [cls.create(**d) for d in list_dicts]
+        except IOError:
+            return []
+
+    @staticmethod
+    def draw(list_rectangles, list_squares):
+        """Draw Rectangles and Squares using the turtle module.
+        Args:
+            list_rectangles (list): A list of Rectangle objects to draw.
+            list_squares (list): A list of Square objects to draw.
         """
-        Test check if file loads from square
-        """
-        S1 = Square(22)
-        S2 = Square(44, 44, 55, 66)
-        lS = [S1, S2]
-        Square.save_to_file(lS)
-        lS2 = Square.load_from_file()
-        self.assertNotEqual(lS, lS2)
+        turt = turtle.Turtle()
+        turt.screen.bgcolor("#b7312c")
+        turt.pensize(3)
+        turt.shape("turtle")
+
+        turt.color("#ffffff")
+        for rect in list_rectangles:
+            turt.showturtle()
+            turt.up()
+            turt.goto(rect.x, rect.y)
+            turt.down()
+            for i in range(2):
+                turt.forward(rect.width)
+                turt.left(90)
+                turt.forward(rect.height)
+                turt.left(90)
+            turt.hideturtle()
+
+        turt.color("#b5e3d8")
+        for sq in list_squares:
+            turt.showturtle()
+            turt.up()
+            turt.goto(sq.x, sq.y)
+            turt.down()
+            for i in range(2):
+                turt.forward(sq.width)
+                turt.left(90)
+                turt.forward(sq.height)
+                turt.left(90)
+            turt.hideturtle()
+
+        turtle.exitonclick()
