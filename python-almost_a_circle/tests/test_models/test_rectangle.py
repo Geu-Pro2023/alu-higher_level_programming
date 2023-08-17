@@ -13,7 +13,7 @@ class TestRectangle(unittest.TestCase):
 
     def setUp(self):
         '''Imports module, instantiates class'''
-        Base.Base_nb_objects = 0
+        Base._Base__nb_objects = 0
 
     def tearDown(self):
         '''Cleans up after each test_method.'''
@@ -34,7 +34,7 @@ class TestRectangle(unittest.TestCase):
         '''Tests constructor signature.'''
         with self.assertRaises(TypeError) as e:
             r = Rectangle()
-        s = "_init_() missing 2 required positional arguments: 'width' \
+        s = "__init__() missing 2 required positional arguments: 'width' \
 and 'height'"
         self.assertEqual(str(e.exception), s)
 
@@ -42,7 +42,7 @@ and 'height'"
         '''Tests constructor signature.'''
         with self.assertRaises(TypeError) as e:
             r = Rectangle(1, 2, 3, 4, 5, 6)
-        s = "_init_() takes from 3 to 6 positional arguments but 7 were \
+        s = "__init__() takes from 3 to 6 positional arguments but 7 were \
 given"
         self.assertEqual(str(e.exception), s)
 
@@ -50,7 +50,7 @@ given"
         '''Tests constructor signature.'''
         with self.assertRaises(TypeError) as e:
             r = Rectangle(1)
-        s = "_init_() missing 1 required positional argument: 'height'"
+        s = "__init__() missing 1 required positional argument: 'height'"
         self.assertEqual(str(e.exception), s)
 
     def test_D_instantiation(self):
@@ -58,9 +58,9 @@ given"
         r = Rectangle(10, 20)
         self.assertEqual(str(type(r)), "<class 'models.rectangle.Rectangle'>")
         self.assertTrue(isinstance(r, Base))
-        d = {'Rectangleheight': 20, '_Rectangle_width': 10,
-             'Rectanglex': 0, '_Rectangle_y': 0, 'id': 1}
-        self.assertDictEqual(r._dict_, d)
+        d = {'_Rectangle__height': 20, '_Rectangle__width': 10,
+             '_Rectangle__x': 0, '_Rectangle__y': 0, 'id': 1}
+        self.assertDictEqual(r.__dict__, d)
 
         with self.assertRaises(TypeError) as e:
             r = Rectangle("1", 2)
@@ -115,25 +115,25 @@ given"
     def test_D_instantiation_positional(self):
         '''Tests positional instantiation.'''
         r = Rectangle(5, 10, 15, 20)
-        d = {'Rectangleheight': 10, '_Rectangle_width': 5,
-             'Rectanglex': 15, '_Rectangle_y': 20, 'id': 1}
-        self.assertEqual(r._dict_, d)
+        d = {'_Rectangle__height': 10, '_Rectangle__width': 5,
+             '_Rectangle__x': 15, '_Rectangle__y': 20, 'id': 1}
+        self.assertEqual(r.__dict__, d)
 
         r = Rectangle(5, 10, 15, 20, 98)
-        d = {'Rectangleheight': 10, '_Rectangle_width': 5,
-             'Rectanglex': 15, '_Rectangle_y': 20, 'id': 98}
-        self.assertEqual(r._dict_, d)
+        d = {'_Rectangle__height': 10, '_Rectangle__width': 5,
+             '_Rectangle__x': 15, '_Rectangle__y': 20, 'id': 98}
+        self.assertEqual(r.__dict__, d)
 
     def test_D_instantiation_keyword(self):
         '''Tests positional instantiation.'''
         r = Rectangle(100, 200, id=421, y=99, x=101)
-        d = {'Rectangleheight': 200, '_Rectangle_width': 100,
-             'Rectanglex': 101, '_Rectangle_y': 99, 'id': 421}
-        self.assertEqual(r._dict_, d)
+        d = {'_Rectangle__height': 200, '_Rectangle__width': 100,
+             '_Rectangle__x': 101, '_Rectangle__y': 99, 'id': 421}
+        self.assertEqual(r.__dict__, d)
 
     def test_E_id_inherited(self):
         '''Tests if id is inherited from Base.'''
-        Base.Base_nb_objects = 98
+        Base._Base__nb_objects = 98
         r = Rectangle(2, 4)
         self.assertEqual(r.id, 99)
 
@@ -144,9 +144,9 @@ given"
         r.height = 101
         r.x = 102
         r.y = 103
-        d = {'Rectangleheight': 101, '_Rectangle_width': 100,
-             'Rectanglex': 102, '_Rectangle_y': 103, 'id': 1}
-        self.assertEqual(r._dict_, d)
+        d = {'_Rectangle__height': 101, '_Rectangle__width': 100,
+             '_Rectangle__x': 102, '_Rectangle__y': 103, 'id': 1}
+        self.assertEqual(r.__dict__, d)
         self.assertEqual(r.width, 100)
         self.assertEqual(r.height, 101)
         self.assertEqual(r.x, 102)
@@ -380,15 +380,15 @@ given"
         # ----------------- Tests for #6 ------------------------
 
     def test_K_str_no_args(self):
-        '''Tests _str_() method signature.'''
+        '''Tests __str__() method signature.'''
         r = Rectangle(5, 2)
         with self.assertRaises(TypeError) as e:
-            Rectangle._str_()
-        s = "_str_() missing 1 required positional argument: 'self'"
+            Rectangle.__str__()
+        s = "__str__() missing 1 required positional argument: 'self'"
         self.assertEqual(str(e.exception), s)
 
     def test_K_str(self):
-        '''Tests _str_() method return.'''
+        '''Tests __str__() method return.'''
         r = Rectangle(5, 2)
         s = '[Rectangle] (1) 0/0 - 5/2'
         self.assertEqual(str(r), s)
@@ -399,7 +399,7 @@ given"
         s = '[Rectangle] (3) 5/6 - 3/4'
         self.assertEqual(str(r), s)
 
-        Base.Base_nb_objects = 0
+        Base._Base__nb_objects = 0
         r1 = Rectangle(4, 6, 2, 1, 12)
         self.assertEqual(str(r1), "[Rectangle] (12) 2/1 - 4/6")
 
@@ -415,43 +415,43 @@ given"
         s = "update() missing 1 required positional argument: 'self'"
         self.assertEqual(str(e.exception), s)
 
-        d = r._dict_.copy()
+        d = r.__dict__.copy()
         r.update()
-        self.assertEqual(r._dict_, d)
+        self.assertEqual(r.__dict__, d)
 
     def test_L_update_args(self):
         '''Tests update() postional args.'''
         r = Rectangle(5, 2)
-        d = r._dict_.copy()
+        d = r.__dict__.copy()
 
         r.update(10)
         d["id"] = 10
-        self.assertEqual(r._dict_, d)
+        self.assertEqual(r.__dict__, d)
 
         r.update(10, 5)
-        d["Rectangle_width"] = 5
-        self.assertEqual(r._dict_, d)
+        d["_Rectangle__width"] = 5
+        self.assertEqual(r.__dict__, d)
 
         r.update(10, 5, 17)
-        d["Rectangle_height"] = 17
-        self.assertEqual(r._dict_, d)
+        d["_Rectangle__height"] = 17
+        self.assertEqual(r.__dict__, d)
 
         r.update(10, 5, 17, 20)
-        d["Rectangle_x"] = 20
-        self.assertEqual(r._dict_, d)
+        d["_Rectangle__x"] = 20
+        self.assertEqual(r.__dict__, d)
 
         r.update(10, 5, 17, 20, 25)
-        d["Rectangle_y"] = 25
-        self.assertEqual(r._dict_, d)
+        d["_Rectangle__y"] = 25
+        self.assertEqual(r.__dict__, d)
 
     def test_L_update_args_bad(self):
         '''Tests update() positional arg fubars.'''
         r = Rectangle(5, 2)
-        d = r._dict_.copy()
+        d = r.__dict__.copy()
 
         r.update(10)
         d["id"] = 10
-        self.assertEqual(r._dict_, d)
+        self.assertEqual(r.__dict__, d)
 
         with self.assertRaises(ValueError) as e:
             r.update(10, -5)
@@ -476,57 +476,57 @@ given"
     def test_L_update_kwargs(self):
         '''Tests update() keyword args.'''
         r = Rectangle(5, 2)
-        d = r._dict_.copy()
+        d = r.__dict__.copy()
 
         r.update(id=10)
         d["id"] = 10
-        self.assertEqual(r._dict_, d)
+        self.assertEqual(r.__dict__, d)
 
         r.update(width=5)
-        d["Rectangle_width"] = 5
-        self.assertEqual(r._dict_, d)
+        d["_Rectangle__width"] = 5
+        self.assertEqual(r.__dict__, d)
 
         r.update(height=17)
-        d["Rectangle_height"] = 17
-        self.assertEqual(r._dict_, d)
+        d["_Rectangle__height"] = 17
+        self.assertEqual(r.__dict__, d)
 
         r.update(x=20)
-        d["Rectangle_x"] = 20
-        self.assertEqual(r._dict_, d)
+        d["_Rectangle__x"] = 20
+        self.assertEqual(r.__dict__, d)
 
         r.update(y=25)
-        d["Rectangle_y"] = 25
-        self.assertEqual(r._dict_, d)
+        d["_Rectangle__y"] = 25
+        self.assertEqual(r.__dict__, d)
 
     def test_L_update_kwargs_2(self):
         '''Tests update() keyword args.'''
         r = Rectangle(5, 2)
-        d = r._dict_.copy()
+        d = r.__dict__.copy()
 
         r.update(id=10)
         d["id"] = 10
-        self.assertEqual(r._dict_, d)
+        self.assertEqual(r.__dict__, d)
 
         r.update(id=10, width=5)
-        d["Rectangle_width"] = 5
-        self.assertEqual(r._dict_, d)
+        d["_Rectangle__width"] = 5
+        self.assertEqual(r.__dict__, d)
 
         r.update(id=10, width=5, height=17)
-        d["Rectangle_height"] = 17
-        self.assertEqual(r._dict_, d)
+        d["_Rectangle__height"] = 17
+        self.assertEqual(r.__dict__, d)
 
         r.update(id=10, width=5, height=17, x=20)
-        d["Rectangle_x"] = 20
-        self.assertEqual(r._dict_, d)
+        d["_Rectangle__x"] = 20
+        self.assertEqual(r.__dict__, d)
 
         r.update(id=10, width=5, height=17, x=20, y=25)
-        d["Rectangle_y"] = 25
-        self.assertEqual(r._dict_, d)
+        d["_Rectangle__y"] = 25
+        self.assertEqual(r.__dict__, d)
 
         r.update(y=25, id=10, height=17, x=20, width=5)
-        self.assertEqual(r._dict_, d)
+        self.assertEqual(r.__dict__, d)
 
-        Base.Base_nb_objects = 0
+        Base._Base__nb_objects = 0
         r1 = Rectangle(10, 10, 10, 10)
         self.assertEqual(str(r1), "[Rectangle] (1) 10/10 - 10/10")
 
@@ -542,7 +542,7 @@ given"
         r1.update(x=1, height=2, y=3, width=4)
         self.assertEqual(str(r1), "[Rectangle] (89) 1/3 - 4/2")
 
-        Base.Base_nb_objects = 0
+        Base._Base__nb_objects = 0
         r1 = Rectangle(10, 10, 10, 10)
         self.assertEqual(str(r1), "[Rectangle] (1) 10/10 - 10/10")
 
@@ -591,5 +591,5 @@ given"
         self.assertEqual(str(r1), str(r2))
         self.assertNotEqual(r1, r2)
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     unittest.main()

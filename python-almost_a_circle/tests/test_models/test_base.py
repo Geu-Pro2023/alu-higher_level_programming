@@ -11,7 +11,7 @@ class TestBase(unittest.TestCase):
 
     def setUp(self):
         '''Imports module, instantiates class'''
-        Base.Base_nb_objects = 0
+        Base._Base__nb_objects = 0
         pass
 
     def tearDown(self):
@@ -20,31 +20,31 @@ class TestBase(unittest.TestCase):
 
     def test_A_nb_objects_private(self):
         '''Tests if nb_objects is private class attribute.'''
-        self.assertTrue(hasattr(Base, "Base_nb_objects"))
+        self.assertTrue(hasattr(Base, "_Base__nb_objects"))
 
     def test_B_nb_objects_initialized(self):
         '''Tests if nb_objects initializes to zero.'''
-        self.assertEqual(getattr(Base, "Base_nb_objects"), 0)
+        self.assertEqual(getattr(Base, "_Base__nb_objects"), 0)
 
     def test_C_instantiation(self):
         '''Tests Base() instantiation.'''
         b = Base()
         self.assertEqual(str(type(b)), "<class 'models.base.Base'>")
-        self.assertEqual(b._dict_, {"id": 1})
+        self.assertEqual(b.__dict__, {"id": 1})
         self.assertEqual(b.id, 1)
 
     def test_D_constructor(self):
         '''Tests constructor signature.'''
         with self.assertRaises(TypeError) as e:
-            Base._init_()
-        msg = "_init_() missing 1 required positional argument: 'self'"
+            Base.__init__()
+        msg = "__init__() missing 1 required positional argument: 'self'"
         self.assertEqual(str(e.exception), msg)
 
     def test_D_constructor_args_2(self):
         '''Tests constructor signature with 2 notself args.'''
         with self.assertRaises(TypeError) as e:
-            Base._init_(self, 1, 2)
-        msg = "_init_() takes from 1 to 2 positional arguments but 3 \
+            Base.__init__(self, 1, 2)
+        msg = "__init__() takes from 1 to 2 positional arguments but 3 \
 were given"
         self.assertEqual(str(e.exception), msg)
 
@@ -57,7 +57,7 @@ were given"
     def test_F_id_synced(self):
         '''Tests sync between class and instance id.'''
         b = Base()
-        self.assertEqual(getattr(Base, "Base_nb_objects"), b.id)
+        self.assertEqual(getattr(Base, "_Base__nb_objects"), b.id)
 
     def test_F_id_synced_more(self):
         '''Tests sync between class and instance id.'''
@@ -65,7 +65,7 @@ were given"
         b = Base("Foo")
         b = Base(98)
         b = Base()
-        self.assertEqual(getattr(Base, "Base_nb_objects"), b.id)
+        self.assertEqual(getattr(Base, "_Base__nb_objects"), b.id)
 
     def test_G_custom_id_int(self):
         '''Tests custom int id.'''
@@ -287,5 +287,5 @@ were given"
         self.assertNotEqual(id(list_in[1]), id(list_out[1]))
         self.assertEqual(str(list_in[1]), str(list_out[1]))
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     unittest.main()
