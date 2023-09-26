@@ -19,4 +19,3 @@ if (!isNaN(parseInt(size))) {
 } else {
   console.log("Missing size");
 }
-
